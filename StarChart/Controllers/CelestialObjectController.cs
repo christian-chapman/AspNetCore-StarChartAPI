@@ -19,21 +19,13 @@ namespace StarChart.Controllers
         }
 
         [HttpGet("{id:int}", Name = "GetById")]
-        IActionResult GetById(int id)
+        public IActionResult GetById(int id)
         {
-            CelestialObject requestedCelObj = _context.CelestialObjects.Find(id);
-
-            if (requestedCelObj == null) return NotFound();
-
-            foreach (CelestialObject obj in _context.CelestialObjects)
-            {
-                if (obj.OrbitedObjectId == id)
-                {
-                    requestedCelObj.Satellites.Add(obj);
-                }
-            }
-
-            return Ok(requestedCelObj);
+            var Co = _context.CelestialObjects.Find(id);
+            if (Co == null)
+                return NotFound();
+            Co.Satellites = _context.CelestialObjects.Where(op => op.OrbitedObjectId == id).ToList();
+            return Ok(Co);
 
         }
 
